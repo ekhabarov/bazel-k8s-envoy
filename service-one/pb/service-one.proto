@@ -1,0 +1,31 @@
+syntax = "proto3";
+package svc;
+
+option go_package = "github.com/ekhabarov/bazel-k8s-envoy/service-one/pb";
+
+import "google/api/annotations.proto";
+
+service ServiceOne {
+  rpc Hello(HelloRequest) returns (HelloResponse){
+    option (google.api.http) = { get: "/v1/hello" };
+  }
+  rpc Bye(ByeRequest) returns (ByeResponse){
+    option (google.api.http) = { get: "/v1/bye" };
+  }
+}
+
+message HelloRequest {
+  string name = 1;
+ }
+
+message HelloResponse {
+  string body = 1;
+}
+
+message ByeRequest {
+  string name = 1;
+}
+
+message ByeResponse {
+  string body = 1;
+}
