@@ -1,0 +1,30 @@
+name: Build
+on: [ pull_request ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Cache bazel
+      uses: actions/cache@v2
+      env:
+        cache-name: bazel-cache
+      with:
+        path: |
+          ~/.cache/bazelisk
+          ~/.cache/bazel
+        key: ${{ runner.os }}-${{ env.cache-name }}
+
+    - name: Setup Bazelisk
+      uses: bazelbuild/setup-bazelisk@v1.0.1
+
+    - name: Checkout sources
+      uses: actions/checkout@v2
+
+    - name: Build everything
+      run: bazel build //...
+
+    # - name: Test everything
+    #   run: bazel test //...
+

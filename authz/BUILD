@@ -1,5 +1,6 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_push")
 load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
 load("//:helpers.bzl", "namespace")
 
@@ -25,6 +26,7 @@ go_image(
     name = "image",
     embed = ["authz_lib"],
     importpath = "github.com/ekhabarov/bazel-k8s-envoy/authz",
+    visibility = ["//visibility:public"],
 )
 
 k8s_object(
@@ -35,4 +37,13 @@ k8s_object(
         "%{namespace}": namespace(),
     },
     template = "//k8s:api-deployment-yaml",
+)
+
+container_push(
+    name = "push_image",
+    format = "Docker",
+    image = ":image",
+    registry = "ghcr.io",
+    repository = "ekhabarov/authz",
+    tag = "$(IMAGE_TAG)",
 )

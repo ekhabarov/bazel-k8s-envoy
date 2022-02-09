@@ -1,4 +1,4 @@
-load("@io_bazel_rules_docker//container:container.bzl", "container_image")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
 load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
 load("@io_bazel_rules_k8s//k8s:objects.bzl", "k8s_objects")
 load("//:helpers.bzl", "default_namespace")
@@ -11,7 +11,7 @@ container_image(
     files = [
         "//service-one/pb:service_one_descriptor_set",
     ],
-    stamp = True,
+    stamp = "@io_bazel_rules_docker//stamp:use_stamp_flag",
     workdir = "/etc/envoy",
 )
 
@@ -41,4 +41,13 @@ k8s_object(
     kind = "deployment",
     substitutions = default_namespace(),
     template = ":deployment",
+)
+
+container_push(
+    name = "push_image",
+    format = "Docker",
+    image = ":image",
+    registry = "ghcr.io",
+    repository = "ekhabarov/envoy",
+    tag = "$(IMAGE_TAG)",
 )
