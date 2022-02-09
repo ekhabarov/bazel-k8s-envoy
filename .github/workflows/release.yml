@@ -1,0 +1,44 @@
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish_images:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Cache bazel
+      uses: actions/cache@v2
+      env:
+        cache-name: bazel-cache
+      with:
+        path: |
+          ~/.cache/bazelisk
+          ~/.cache/bazel
+        key: ${{ runner.os }}-${{ env.cache-name }}
+
+    - name: Setup Bazelisk
+      uses: bazelbuild/setup-bazelisk@v1.0.1
+
+    - name: Checkout sources
+      uses: actions/checkout@v2
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push service-one image to ghcr.io
+      run: bazel run --define=IMAGE_TAG=${{ github.ref_name }} --stamp //service-one:push_image
+
+    - name: Push authz image to ghcr.io
+      run: bazel run --define=IMAGE_TAG=${{ github.ref_name }} --stamp //authz:push_image
+
+    - name: Push envoy image to ghcr.io
+      run: bazel run --define=IMAGE_TAG=${{ github.ref_name }} --stamp //k8s/envoy:push_image
+
+

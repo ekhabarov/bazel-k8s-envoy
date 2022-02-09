@@ -1,1 +1,10 @@
+# Limit resources for build
 build --local_ram_resources=HOST_RAM*.5 --local_cpu_resources=8
+
+# Show us information about failures.
+build --verbose_failures
+test --test_output=errors
+
+# Include git version info
+build --workspace_status_command='echo "STABLE_GIT_COMMIT `git rev-parse --short HEAD`"'
+build --define=IMAGE_TAG=CHANGE_ME
