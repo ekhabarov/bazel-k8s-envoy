@@ -1,8 +1,5 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
-load("@io_bazel_rules_docker//go:image.bzl", "go_image")
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
-load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
-load("//:helpers.bzl", "namespace")
 
 go_library(
     name = "service-one_lib",
@@ -20,42 +17,40 @@ go_library(
 go_binary(
     name = "service-one",
     embed = [":service-one_lib"],
+    goarch = "amd64",
+    goos = "linux",
     visibility = ["//visibility:public"],
 )
 
-go_image(
-    name = "image",
-    embed = ["service-one_lib"],
-    importpath = "github.com/ekhabarov/bazel-k8s-envoy/service-one",
-)
-
 container_image(
-    name = "custom_image",
+    name = "image",
     base = "@go_base//image",
     entrypoint = ["/service-one"],
-    env = {
-        "ENV_VAR1": "value1",
-        "ENV_VAR2": "value2",
-    },
     files = [
         ":service-one",
     ],
-    labels = {
-        "version": "1.0.0",
-    },
     ports = [
-        "5001/tcp",
+        "5000/tcp",
     ],
 )
 
-k8s_object(
+genrule(
     name = "yaml",
-    kind = "deployment",
-    substitutions = {
-        "%{apiname}": "service-one",
-        "%{namespace}": namespace(),
-    },
-    template = "//k8s:api-deployment-yaml",
+    srcs = [
+        "//k8s:defaults.yaml",
+        "//k8s/base:service.yaml",
+        ":values.yaml",
+    ],
+    outs = ["manifest.yaml"],
+    cmd = """
+      echo $(location @com_github_vmware_tanzu_carvel_ytt//cmd/ytt) \
+         `ls $(SRCS) | sed 's/^/-f /g'` \
+          > $@
+    """,
+    executable = True,
+    tools = [
+        "@com_github_vmware_tanzu_carvel_ytt//cmd/ytt",
+    ],
 )
 
 container_push(

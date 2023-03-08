@@ -25,6 +25,6 @@ func (s *Server) Hello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloResp
 	grpc.SendHeader(ctx, header)
 
 	return &pb.HelloResponse{
-		Body: "Hello, " + req.Name,
+		Msg: "Hello, " + req.Name,
 	}, nil
 }

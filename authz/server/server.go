@@ -59,7 +59,7 @@ func (a *Server) Check(ctx context.Context, req *auth.CheckRequest) (*auth.Check
 	fmt.Println("=======================")
 
 	if headers["token"] != "abc" {
-		return denided(401, "unauthenticated"), nil
+		return denided(401, "unuathorized"), nil
 	}
 
 	return allowed(), nil

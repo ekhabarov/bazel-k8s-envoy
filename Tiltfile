@@ -3,38 +3,29 @@ disable_snapshots()
 
 load('./bazel.Tiltfile', 'bazel_run', 'bazel_build', 'bazel_target_files')
 
-k8s_yaml(bazel_run('//k8s:namespace-yaml'))
+k8s_yaml(bazel_run('//k8s:ns'))
 
-infra = [
-  {'name': 'envoy', 'ports': ['8080:8080', '8081:8081']},
-]
-
-for s in infra:
-  name = '{}'.format(s['name'])
-  ports = s['ports']
-
-  bazel_build('bazel/k8s/%s:image' % name, '//k8s/%s:image' % name)
-  k8s_yaml(bazel_run('//k8s/%s:config-map-yaml' % name))
-  k8s_yaml(bazel_run('//k8s/%s:deployment-yaml' % name, 'bazel/k8s'))
-  k8s_resource(workload=name, port_forwards=ports)
-
-prefixes = { 'grpc': '55' }
+prefixes = { 'grpc': '55', 'rest': '58', 'admin': '59' }
 
 apis = [
   {'num': '000', 'name':'service-one', 'ports': {'grpc': '5000'}},
   {'num': '001', 'name':'authz', 'ports': {'grpc': '5000'}},
+  {'num': '002', 'name':'envoy', 'ports': {'rest': '8080', 'admin': '8081'}},
 ]
 
 for api in apis:
   name = '{}'.format(api['name'])
   ports = []
 
-  for p in prefixes:
-    ports.append('{pref}{num}:{cport}'.format(
-      pref=prefixes[p],
-      num = api['num'],
-      cport = api['ports'][p])
-    )
+  for p in api['ports']:
+    if name != "envoy":
+      ports.append('{pref}{num}:{cport}'.format(
+        pref=prefixes[p],
+        num = api['num'],
+        cport = api['ports'][p])
+      )
+    else:
+      ports.append('{p}:{p}'.format(p=api['ports'][p]))
     print(ports)
 
   k8s_yaml(bazel_run('//{name}:yaml'.format(name=name)))

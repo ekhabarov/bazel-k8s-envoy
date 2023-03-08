@@ -1,25 +1,23 @@
-load("@io_bazel_rules_k8s//k8s:object.bzl", "k8s_object")
-load("//:helpers.bzl", "default_namespace")
+exports_files([
+  "defaults.yaml",
+])
 
-package(default_visibility = ["//visibility:public"])
-
-filegroup(
-    name = "api-deployment-yaml",
+genrule(
+    name = "ns",
     srcs = [
-        "api-deployment.yaml",
+        ":defaults.yaml",
+        ":values.yaml",
+        "//k8s/base:namespace.yaml",
     ],
-)
-
-filegroup(
-    name = "namespace",
-    srcs = [
-        "namespace.yaml",
+    outs = ["manifest.yaml"],
+    cmd = """
+      echo $(location @com_github_vmware_tanzu_carvel_ytt//cmd/ytt) \
+         `ls $(SRCS) | sed 's/^/-f /g'` \
+          > $@
+    """,
+    executable = True,
+    tools = [
+        "@com_github_vmware_tanzu_carvel_ytt//cmd/ytt",
     ],
-)
-
-k8s_object(
-    name = "namespace-yaml",
-    kind = "deployment",
-    substitutions = default_namespace(),
-    template = ":namespace",
+    visibility = ["//visibility:public"],
 )

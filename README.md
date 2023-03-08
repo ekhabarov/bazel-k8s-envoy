@@ -1,6 +1,6 @@
 # Envoy proxy as an API gateway. Built with Bazel. Deployed into Kubernetes.
 
-[Blog post](https://ekhabarov.com/post/envoy-as-an-api-gateway/) with detailed explanation.
+[Blog post](https://ekhabarov.com/envoy) with detailed explanation.
 
 ## Links
 * [Envoy proxy](https://www.envoyproxy.io/)

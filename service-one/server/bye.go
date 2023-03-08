@@ -23,6 +23,6 @@ func (s *Server) Bye(ctx context.Context, req *pb.ByeRequest) (*pb.ByeResponse, 
 	grpc.SendHeader(ctx, header)
 
 	return &pb.ByeResponse{
-		Body: "Bye bye, " + req.Name,
+		Msg: "Bye bye, " + req.Name,
 	}, nil
 }

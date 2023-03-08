@@ -2,10 +2,10 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "8e968b5fcea1d2d64071872b12737bbb5514524ee5f0a4f54f5920266c261acb",
+    sha256 = "dd926a88a564a9246713a9c00b35315f54cbd46b31a26d5d8fb264c07045f05d",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.28.0/rules_go-v0.28.0.zip",
-        "https://github.com/bazelbuild/rules_go/releases/download/v0.28.0/rules_go-v0.28.0.zip",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.38.1/rules_go-v0.38.1.zip",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.38.1/rules_go-v0.38.1.zip",
     ],
 )
 
@@ -13,32 +13,31 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_depe
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.17.1")
+go_register_toolchains(version = "1.20.2")
 
 http_archive(
     name = "bazel_gazelle",
-    sha256 = "222e49f034ca7a1d1231422cdb67066b885819885c356673cb1f72f748a3c9d4",
+    sha256 = "ecba0f04f96b4960a5b250c8e8eeec42281035970aa8852dda73098274d14a1d",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.3/bazel-gazelle-v0.22.3.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.3/bazel-gazelle-v0.22.3.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.29.0/bazel-gazelle-v0.29.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.29.0/bazel-gazelle-v0.29.0.tar.gz",
     ],
 )
 
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+load("//:go_deps.bzl", "go_deps")
+
+# gazelle:repository_macro go_deps.bzl%go_deps
+go_deps()
 
 gazelle_dependencies()
 
-# Protobuf
-
-RULES_PROTO_COMMIT = "f7a30f6f80006b591fa7c437fe5a951eb10bcbcf"
-
 http_archive(
     name = "rules_proto",
-    sha256 = "9fc210a34f0f9e7cc31598d109b5d069ef44911a82f507d5a88716db171615a8",
-    strip_prefix = "rules_proto-{COMMIT}".format(COMMIT = RULES_PROTO_COMMIT),
+    sha256 = "dc3fb206a2cb3441b485eb1e423165b231235a1ea9b031b4433cf7bc1fa460dd",
+    strip_prefix = "rules_proto-5.3.0-21.7",
     urls = [
-        # "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/{COMMIT}.tar.gz".format(COMMIT=RULES_PROTO_COMMIT),
-        "https://github.com/bazelbuild/rules_proto/archive/{COMMIT}.tar.gz".format(COMMIT = RULES_PROTO_COMMIT),
+        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/5.3.0-21.7.tar.gz",
     ],
 )
 
@@ -50,18 +49,18 @@ rules_proto_toolchains()
 
 http_archive(
     name = "com_google_protobuf",
-    sha256 = "1c11b325e9fbb655895e8fe9843479337d50dd0be56a41737cbb9aede5e9ffa0",
-    strip_prefix = "protobuf-3.15.3",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.15.3.zip"],
+    sha256 = "04e1ed9664d1325b43723b6a62a4a41bf6b2b90ac72b5daee288365aad0ea47d",
+    strip_prefix = "protobuf-3.20.3",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.20.3.zip"],
 )
 
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 
-protobuf_deps()
+# protobuf_deps()
 
 ############## TILT
 
-TILT_VERSION = "0.22.9"
+TILT_VERSION = "0.31.2"
 
 TILT_ARCH = "x86_64"
 
@@ -70,32 +69,38 @@ TILT_URL = "https://github.com/windmilleng/tilt/releases/download/v{VER}/tilt.{V
 http_archive(
     name = "tilt_linux_x86_64",
     build_file_content = "exports_files(['tilt'])",
-    sha256 = "5ede1bd6bfdf7ad46984166f7d651696616ec2c7b3c7a3fed2a0b9cc8e3d6d6e",
+    sha256 = "9ec1a219393367fc41dd5f5f1083f60d6e9839e5821b8170c26481bf6b19dc7e",
     urls = [TILT_URL.format(
-        VER = TILT_VERSION,
-        OS = "linux",
         ARCH = TILT_ARCH,
+        OS = "linux",
+        VER = TILT_VERSION,
     )],
 )
 
 http_archive(
     name = "tilt_darwin_x86_64",
     build_file_content = "exports_files(['tilt'])",
-    sha256 = "77a3848233e07e715d1f2f73d7ef10c8164c7457f7a6c8a2dc1d68808bd29fdd",
+    sha256 = "ade0877e72f56a089377e517efc86369220ac7b6a81f078e8e99a9c29aa244eb",
     urls = [TILT_URL.format(
-        VER = TILT_VERSION,
-        OS = "mac",
         ARCH = TILT_ARCH,
+        OS = "mac",
+        VER = TILT_VERSION,
     )],
 )
 
-# Docker rules
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "85ffff62a4c22a74dbd98d05da6cf40f497344b3dbf1e1ab0a37ab2a1a6ca014",
-    strip_prefix = "rules_docker-0.23.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.23.0/rules_docker-v0.23.0.tar.gz"],
+    sha256 = "b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.25.0/rules_docker-v0.25.0.tar.gz"],
 )
+
+load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repositories = "repositories")
+
+container_repositories()
+
+load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
+container_deps()
 
 # go_image
 load("@io_bazel_rules_docker//go:image.bzl", _go_image_repos = "repositories")
@@ -107,40 +112,17 @@ load("@io_bazel_rules_docker//container:pull.bzl", "container_pull")
 
 container_pull(
     name = "envoy_linux_amd64",
-    digest = "sha256:e02931a6470916fd1f468d807cded3840062f2effa586ab90b901d7f494cc91f",
+    digest = "sha256:bbc5144e2391e4cbbafda1b9d71d04333f3ea783eadaabad6a76aa316fe3df6d",
     registry = "index.docker.io",
     repository = "envoyproxy/envoy",
-    tag = "v1.17.1",
+    tag = "v1.25.2",
 )
 
+# https://github.com/GoogleContainerTools/distroless/tree/main/base
 container_pull(
     name = "go_base",
-    digest = "sha256:1d40fb1b82f00135635dd5864ec91a70dff306a1c81cb6761c0982144cd5351f",  #base
+    digest = "sha256:2259760686e4955ddb1c5e8e584055754358873eef4faa0eaeeccb5685b1b20b",  #base
     registry = "gcr.io",
     repository = "distroless/base",
+    tag = "latest",
 )
-
-load("//:go_deps.bzl", "go_deps")
-
-# gazelle:repository_macro go_deps.bzl%go_deps
-go_deps()
-
-load("//:go_deps_patched.bzl", "go_deps_patched")
-
-go_deps_patched()
-
-# Kubernetes
-http_archive(
-    name = "io_bazel_rules_k8s",
-    sha256 = "51f0977294699cd547e139ceff2396c32588575588678d2054da167691a227ef",
-    strip_prefix = "rules_k8s-0.6",
-    urls = ["https://github.com/bazelbuild/rules_k8s/archive/v0.6.tar.gz"],
-)
-
-load("@io_bazel_rules_k8s//k8s:k8s.bzl", "k8s_repositories")
-
-k8s_repositories()
-
-load("@io_bazel_rules_k8s//k8s:k8s_go_deps.bzl", k8s_go_deps = "deps")
-
-k8s_go_deps()  # toolchain
