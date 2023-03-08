@@ -1,0 +1,4 @@
+#@data/values-schema
+---
+namespace: bazel-k8s-envoy
+app_name: ""

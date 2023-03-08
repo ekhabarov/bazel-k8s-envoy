@@ -20,6 +20,7 @@ go_proto_library(
 
 go_library(
     name = "pb",
+    srcs = ["empty.go"],
     embed = [":pb_go_proto"],
     importpath = "github.com/ekhabarov/bazel-k8s-envoy/service-one/pb",
 )

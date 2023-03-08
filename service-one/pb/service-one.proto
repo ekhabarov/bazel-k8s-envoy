@@ -19,7 +19,7 @@ message HelloRequest {
  }
 
 message HelloResponse {
-  string body = 1;
+  string msg = 1;
 }
 
 message ByeRequest {
@@ -27,5 +27,5 @@ message ByeRequest {
 }
 
 message ByeResponse {
-  string body = 1;
+  string msg = 1;
 }

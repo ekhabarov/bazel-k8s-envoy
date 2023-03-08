@@ -1,0 +1,43 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: #@ data.values.namespace
+  name: #@ data.values.app_name
+  labels:
+    app: #@ data.values.app_name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: #@ data.values.app_name
+  template:
+    metadata:
+      labels:
+        app: #@ data.values.app_name
+    spec:
+      containers:
+      - name: #@ data.values.app_name
+        image: #@ "bazel/%s:image" % data.values.app_name
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "10m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: #@ data.values.namespace
+  name: #@ data.values.app_name
+spec:
+  selector:
+    app: #@ data.values.app_name
+  ports:
+    - name: grpc
+      port: 5000
+      targetPort: 5000
+      protocol: TCP
+  clusterIP: None
+

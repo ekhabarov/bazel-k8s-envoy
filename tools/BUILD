@@ -4,7 +4,7 @@ sh_binary(
     args = [
         "tilt",
         "up",
-        "--hud=true",
+        "--legacy=true",
     ],
     data = select({
         "@bazel_tools//src/conditions:darwin": ["@tilt_darwin_x86_64//:tilt"],
