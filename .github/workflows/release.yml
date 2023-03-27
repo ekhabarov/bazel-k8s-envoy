@@ -9,24 +9,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Cache bazel
-      uses: actions/cache@v2
-      env:
-        cache-name: bazel-cache
+    - name: Checkout sources
+      uses: actions/checkout@v3
+
+    - name: Cache Bazel
+      uses: actions/cache@v3
       with:
         path: |
-          ~/.cache/bazelisk
           ~/.cache/bazel
-        key: ${{ runner.os }}-${{ env.cache-name }}
-
-    - name: Setup Bazelisk
-      uses: bazelbuild/setup-bazelisk@v1.0.1
-
-    - name: Checkout sources
-      uses: actions/checkout@v2
+        key: ${{ runner.os }}-bazel-${{ hashFiles('.bazelversion', '.bazelrc', 'WORKSPACE', 'WORKSPACE.bazel', 'MODULE.bazel') }}
+        restore-keys: |
+          ${{ runner.os }}-bazel-
 
     - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
+      uses: docker/login-action@v2
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
