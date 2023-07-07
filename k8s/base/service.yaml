@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: #@ data.values.app_name
-        image: #@ "bazel/%s:image" % data.values.app_name
+        image: #@ "bazel/{}@{}".format(data.values.app_name, data.values.image_digest)
         ports:
         - containerPort: 5000
         resources:

@@ -2,3 +2,4 @@
 ---
 namespace: bazel-k8s-envoy
 app_name: ""
+image_digest: ""

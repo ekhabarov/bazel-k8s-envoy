@@ -1,4 +1,5 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
+load("@com_github_ebay_rules_ytt//:def.bzl", "ytt")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -15,7 +16,7 @@ container_image(
     ],
 )
 
-genrule(
+ytt(
     name = "yaml",
     srcs = [
         "//k8s:defaults.yaml",
@@ -24,16 +25,7 @@ genrule(
         ":ports.yaml",
         ":values.yaml",
     ],
-    outs = ["manifest.yaml"],
-    cmd = """
-      echo $(location @com_github_vmware_tanzu_carvel_ytt//cmd/ytt) \
-         `ls $(SRCS) | sed 's/^/-f /g'` \
-          > $@
-    """,
-    executable = True,
-    tools = [
-        "@com_github_vmware_tanzu_carvel_ytt//cmd/ytt",
-    ],
+    image = ":image.digest",
 )
 
 container_push(
