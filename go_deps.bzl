@@ -5,8 +5,8 @@ def go_deps():
         name = "co_honnef_go_tools",
         build_file_proto_mode = "disable",
         importpath = "honnef.co/go/tools",
-        sum = "h1:/hemPrYIhOhy8zYrNj+069zDB68us2sMGsfkFJO0iZs=",
-        version = "v0.0.0-20190523083050-ea95bdfd59fc",
+        sum = "h1:YGD4H+SuIOOqsyoLOpZDWcieM28W47/zRO7f+9V3nvo=",
+        version = "v0.4.5",
     )
     go_repository(
         name = "com_github_aws_aws_lambda_go",
@@ -1304,6 +1304,13 @@ def go_deps():
         sum = "h1:c2HOrn5iMezYjSlGPncknSEr/8x5LELb/ilJbXi9DEA=",
         version = "v0.0.0-20190121172915-509febef88a4",
     )
+    go_repository(
+        name = "org_golang_x_exp_typeparams",
+        build_file_proto_mode = "disable",
+        importpath = "golang.org/x/exp/typeparams",
+        sum = "h1:Jw5wfR+h9mnIYH+OtGT2im5wV1YGGDora5vTv/aa5bE=",
+        version = "v0.0.0-20221208152030-732eee02a75a",
+    )
 
     go_repository(
         name = "org_golang_x_lint",
@@ -1317,8 +1324,8 @@ def go_deps():
         name = "org_golang_x_mod",
         build_file_proto_mode = "disable",
         importpath = "golang.org/x/mod",
-        sum = "h1:LUYupSeNrTNCGzR/hVBk2NHZO4hXcVaW1k4Qx7rjPx8=",
-        version = "v0.8.0",
+        sum = "h1:lFO9qtOdlre5W1jxS3r/4szv2/6iXxScdzjoBMXNhYk=",
+        version = "v0.10.0",
     )
 
     go_repository(
@@ -1346,8 +1353,8 @@ def go_deps():
         name = "org_golang_x_sys",
         build_file_proto_mode = "disable",
         importpath = "golang.org/x/sys",
-        sum = "h1:MVltZSvRTcU2ljQOhs94SXPftV6DCNnZViHeQps87pQ=",
-        version = "v0.6.0",
+        sum = "h1:EBmGv8NaZBZTWvrbjNoL6HVt+IVy3QDQpJs7VRIw3tU=",
+        version = "v0.8.0",
     )
     go_repository(
         name = "org_golang_x_term",
@@ -1369,8 +1376,8 @@ def go_deps():
         name = "org_golang_x_tools",
         build_file_proto_mode = "disable",
         importpath = "golang.org/x/tools",
-        sum = "h1:BOw41kyTf3PuCW1pVQf8+Cyg8pMlkYB1oo9iJ6D/lKM=",
-        version = "v0.6.0",
+        sum = "h1:mqZawFxUzsv+YVwGQO30cZegeV/YD6dAwsdGxi0tQQg=",
+        version = "v0.9.4-0.20230601214343-86c93e8732cc",
     )
     go_repository(
         name = "org_golang_x_xerrors",

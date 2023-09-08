@@ -1,6 +1,15 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "com_github_sluongng_nogo_analyzer",
+    sha256 = "a74a5e44751d292d17bd879e5aa8b40baa94b5dc2f043df1e3acbb3e23ead073",
+    strip_prefix = "nogo-analyzer-0.0.2",
+    urls = [
+        "https://github.com/sluongng/nogo-analyzer/archive/refs/tags/v0.0.2.tar.gz",
+    ],
+)
+
+http_archive(
     name = "io_bazel_rules_go",
     sha256 = "51dc53293afe317d2696d4d6433a4c33feedb7748a9e352072e2ec3c0dafd2c6",
     urls = [
@@ -13,7 +22,10 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_depe
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.20.5")
+go_register_toolchains(
+  nogo = "@//:nogo",
+  version = "1.20.8",
+)
 
 http_archive(
     name = "bazel_gazelle",
@@ -29,6 +41,10 @@ load("//:go_deps.bzl", "go_deps")
 
 # gazelle:repository_macro go_deps.bzl%go_deps
 go_deps()
+
+load("@com_github_sluongng_nogo_analyzer//staticcheck:deps.bzl", "staticcheck")
+
+staticcheck()
 
 gazelle_dependencies()
 
