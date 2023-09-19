@@ -29,12 +29,10 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Push service-one image to ghcr.io
-      run: bazel run --define=IMAGE_TAG=${{ github.ref_name }} --stamp //service-one:push_image
+      run: bazel run --stamp --embed_label=${{ github.ref_name }} //service-one:push_image
 
     - name: Push authz image to ghcr.io
-      run: bazel run --define=IMAGE_TAG=${{ github.ref_name }} --stamp //authz:push_image
+      run: bazel run --stamp --embed_label=${{ github.ref_name }} //authz:push_image
 
     - name: Push envoy image to ghcr.io
-      run: bazel run --define=IMAGE_TAG=${{ github.ref_name }} --stamp //k8s/envoy:push_image
-
-
+      run: bazel run --stamp --embed_label=${{ github.ref_name }} //envoy:push_image
