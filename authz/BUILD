@@ -1,6 +1,8 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
-load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
 load("@com_github_ebay_rules_ytt//:def.bzl", "ytt")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
+load("//:stamp.bzl", "stamp")
 
 go_library(
     name = "authz_lib",
@@ -17,38 +19,44 @@ go_library(
 go_binary(
     name = "authz",
     embed = [":authz_lib"],
-    goarch = "amd64",
-    goos = "linux",
     visibility = ["//visibility:public"],
 )
 
-container_image(
+pkg_tar(
+    name = "tar",
+    srcs = [":authz"],
+)
+
+oci_image(
     name = "image",
-    base = "@go_base//image",
+    base = "@distroless_base",
     entrypoint = ["/authz"],
-    files = [
-        ":authz",
-    ],
-    ports = [
-        "5000/tcp",
-    ],
+    tars = [":tar"],
+)
+
+oci_tarball(
+    name = "tarball",
+    image = ":image",
+    repo_tags = ["authz:latest"],
+)
+
+stamp(
+    name = "stamped",
+)
+
+oci_push(
+    name = "push_image",
+    image = ":image",
+    remote_tags = ":stamped",
+    repository = "ghcr.io/ekhabarov/authz",
 )
 
 ytt(
     name = "yaml",
     srcs = [
+        ":values.yaml",
         "//k8s:defaults.yaml",
         "//k8s/base:service.yaml",
-        ":values.yaml",
     ],
     image = ":image.digest",
-)
-
-container_push(
-    name = "push_image",
-    format = "Docker",
-    image = ":image",
-    registry = "ghcr.io",
-    repository = "ekhabarov/authz",
-    tag = "$(IMAGE_TAG)",
 )

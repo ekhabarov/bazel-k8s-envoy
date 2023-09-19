@@ -23,8 +23,8 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_depe
 go_rules_dependencies()
 
 go_register_toolchains(
-  nogo = "@//:nogo",
-  version = "1.20.8",
+    nogo = "@//:nogo",
+    version = "1.20.8",
 )
 
 http_archive(
@@ -104,44 +104,81 @@ http_archive(
     )],
 )
 
+### OCI ###
 http_archive(
-    name = "io_bazel_rules_docker",
-    sha256 = "b1e80761a8a8243d03ebca8845e9cc1ba6c82ce7c5179ce2b295cd36f7e394bf",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.25.0/rules_docker-v0.25.0.tar.gz"],
+    name = "rules_oci",
+    sha256 = "c71c25ed333a4909d2dd77e0b16c39e9912525a98c7fa85144282be8d04ef54c",
+    strip_prefix = "rules_oci-1.3.4",
+    url = "https://github.com/bazel-contrib/rules_oci/releases/download/v1.3.4/rules_oci-v1.3.4.tar.gz",
 )
 
-load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repositories = "repositories")
+load("@rules_oci//oci:dependencies.bzl", "rules_oci_dependencies")
 
-container_repositories()
+rules_oci_dependencies()
 
-load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+load("@rules_oci//oci:repositories.bzl", "LATEST_CRANE_VERSION", "LATEST_ZOT_VERSION", "oci_register_toolchains")
 
-container_deps()
-
-# go_image
-load("@io_bazel_rules_docker//go:image.bzl", _go_image_repos = "repositories")
-
-_go_image_repos()
-
-# Base images
-load("@io_bazel_rules_docker//container:pull.bzl", "container_pull")
-
-container_pull(
-    name = "envoy_linux_amd64",
-    digest = "sha256:ae3a208980bda7c2635dfb9637ae6994b27c4d1c8dc5b41b6ecba8434fda380d",
-    registry = "index.docker.io",
-    repository = "envoyproxy/envoy",
-    tag = "distroless-v1.26.2",
+oci_register_toolchains(
+    name = "oci",
+    crane_version = LATEST_CRANE_VERSION,
+    # Uncommenting the zot toolchain will cause it to be used instead of crane for some tasks.
+    # Note that it does not support docker-format images.
+    # zot_version = LATEST_ZOT_VERSION,
 )
 
-# https://github.com/GoogleContainerTools/distroless/tree/main/base
-container_pull(
-    name = "go_base",
-    digest = "sha256:2259760686e4955ddb1c5e8e584055754358873eef4faa0eaeeccb5685b1b20b",  #base
-    registry = "gcr.io",
-    repository = "distroless/base",
-    tag = "latest",
+# You can pull your base images using oci_pull like this:
+load("@rules_oci//oci:pull.bzl", "oci_pull")
+
+oci_pull(
+    name = "distroless_base",
+    digest = "sha256:ccaef5ee2f1850270d453fdf700a5392534f8d1a8ca2acda391fbb6a06b81c86",  #multi-arch
+    image = "gcr.io/distroless/base",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64",
+    ],
 )
+
+oci_pull(
+    name = "envoy_base",
+    # tag = "distroless-v1.27.0",
+    digest = "sha256:e315dd6b713bc6fc98d782940046d4a55711117f61d318459121c0bdfaac70ef",
+    image = "index.docker.io/envoyproxy/envoy",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64",
+    ],
+)
+
+### PKG
+http_archive(
+    name = "rules_pkg",
+    sha256 = "8f9ee2dc10c1ae514ee599a8b42ed99fa262b757058f65ad3c384289ff70c4b8",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
+        "https://github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
+    ],
+)
+
+load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
+
+rules_pkg_dependencies()
+
+###########
+
+### Aspect rules
+http_archive(
+    name = "aspect_bazel_lib",
+    sha256 = "09b51a9957adc56c905a2c980d6eb06f04beb1d85c665b467f659871403cf423",
+    strip_prefix = "bazel-lib-1.34.5",
+    url = "https://github.com/aspect-build/bazel-lib/releases/download/v1.34.5/bazel-lib-v1.34.5.tar.gz",
+)
+
+load("@aspect_bazel_lib//lib:repositories.bzl", "aspect_bazel_lib_dependencies")
+
+aspect_bazel_lib_dependencies()
+
+###########
 
 http_archive(
     name = "com_github_ebay_rules_ytt",

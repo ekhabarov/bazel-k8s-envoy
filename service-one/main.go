@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 
 	"github.com/ekhabarov/bazel-k8s-envoy/service-one/pb"
@@ -18,6 +19,8 @@ func main() {
 	if err != nil {
 		return
 	}
+
+	fmt.Println("started")
 
 	s.Serve(lis)
 }

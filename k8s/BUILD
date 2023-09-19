@@ -1,5 +1,5 @@
 exports_files([
-  "defaults.yaml",
+    "defaults.yaml",
 ])
 
 genrule(

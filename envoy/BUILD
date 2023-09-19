@@ -1,38 +1,49 @@
-load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@com_github_ebay_rules_ytt//:def.bzl", "ytt")
+load("//:stamp.bzl", "stamp")
 
 package(default_visibility = ["//visibility:public"])
 
-container_image(
-    name = "image",
-    base = "@envoy_linux_amd64//image",
-    files = [
+pkg_tar(
+    name = "tar",
+    srcs = [
         ":envoy.yaml",
         "//service-one/pb:service_one_descriptor_set",
     ],
-    ports = [
-        "8080/tcp",
-        "8081/tcp",
-    ],
+)
+
+oci_image(
+    name = "image",
+    base = "@envoy_base",
+    tars = [":tar"],
+)
+
+oci_tarball(
+    name = "tarball",
+    image = ":image",
+    repo_tags = ["envoy:latest"],
+)
+
+stamp(
+    name = "stamped",
+)
+
+oci_push(
+    name = "image_push",
+    image = ":image",
+    remote_tags = ["latest"],
+    repository = "ghcr.io/ekhabarov/envoy",
 )
 
 ytt(
     name = "yaml",
     srcs = [
-        "//k8s:defaults.yaml",
-        "//k8s/base:service.yaml",
         ":command.yaml",
         ":ports.yaml",
         ":values.yaml",
+        "//k8s:defaults.yaml",
+        "//k8s/base:service.yaml",
     ],
     image = ":image.digest",
-)
-
-container_push(
-    name = "push_image",
-    format = "Docker",
-    image = ":image",
-    registry = "ghcr.io",
-    repository = "ekhabarov/envoy",
-    tag = "$(IMAGE_TAG)",
 )
