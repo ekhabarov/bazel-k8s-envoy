@@ -30,7 +30,7 @@ stamp(
 )
 
 oci_push(
-    name = "image_push",
+    name = "push_image",
     image = ":image",
     remote_tags = ["latest"],
     repository = "ghcr.io/ekhabarov/envoy",
