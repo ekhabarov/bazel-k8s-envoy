@@ -107,9 +107,9 @@ http_archive(
 ### OCI ###
 http_archive(
     name = "rules_oci",
-    sha256 = "c71c25ed333a4909d2dd77e0b16c39e9912525a98c7fa85144282be8d04ef54c",
-    strip_prefix = "rules_oci-1.3.4",
-    url = "https://github.com/bazel-contrib/rules_oci/releases/download/v1.3.4/rules_oci-v1.3.4.tar.gz",
+    sha256 = "21a7d14f6ddfcb8ca7c5fc9ffa667c937ce4622c7d2b3e17aea1ffbc90c96bed",
+    strip_prefix = "rules_oci-1.4.0",
+    url = "https://github.com/bazel-contrib/rules_oci/releases/download/v1.4.0/rules_oci-v1.4.0.tar.gz",
 )
 
 load("@rules_oci//oci:dependencies.bzl", "rules_oci_dependencies")
@@ -121,12 +121,8 @@ load("@rules_oci//oci:repositories.bzl", "LATEST_CRANE_VERSION", "LATEST_ZOT_VER
 oci_register_toolchains(
     name = "oci",
     crane_version = LATEST_CRANE_VERSION,
-    # Uncommenting the zot toolchain will cause it to be used instead of crane for some tasks.
-    # Note that it does not support docker-format images.
-    # zot_version = LATEST_ZOT_VERSION,
 )
 
-# You can pull your base images using oci_pull like this:
 load("@rules_oci//oci:pull.bzl", "oci_pull")
 
 oci_pull(
