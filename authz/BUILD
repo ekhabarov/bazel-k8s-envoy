@@ -1,5 +1,5 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
-load("@com_github_ebay_rules_ytt//:def.bzl", "ytt")
+load("@rules_ytt//:defs.bzl", "ytt")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
 load("//:stamp.bzl", "stamp")
@@ -57,6 +57,6 @@ ytt(
         ":values.yaml",
         "//k8s:defaults.yaml",
         "//k8s/base:service.yaml",
+        ":image.digest",
     ],
-    image = ":image.digest",
 )

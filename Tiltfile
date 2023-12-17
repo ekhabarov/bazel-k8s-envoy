@@ -1,7 +1,7 @@
 analytics_settings(enable=False)
 disable_snapshots()
 
-load('./bazel.Tiltfile', 'bazel_run', 'bazel_build', 'bazel_target_files')
+load('./bazel.Tiltfile', 'bazel_run', 'bazel_build')
 
 k8s_yaml(bazel_run('//k8s:ns'))
 

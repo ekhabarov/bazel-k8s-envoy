@@ -18,18 +18,18 @@ gazelle(
     command = "update-repos",
 )
 
-load(":staticheck.bzl", "STATICHECK_ANALYZERS", "STATICHECK_OVERRIDE")
+load(":staticheck.bzl", "STATICCHECK_ANALYZERS", "STATICCHECK_OVERRIDE")
 
 nogo_config(
     name = "nogo_config",
     out = "nogo_config.json",
-    analyzers = STATICHECK_ANALYZERS,
-    override = STATICHECK_OVERRIDE,
+    analyzers = STATICCHECK_ANALYZERS,
+    override = STATICCHECK_OVERRIDE,
 )
 
 nogo(
     name = "nogo",
     config = ":nogo_config.json",
     visibility = ["//visibility:public"],
-    deps = staticcheck_analyzers(STATICHECK_ANALYZERS),
+    deps = staticcheck_analyzers(STATICCHECK_ANALYZERS),
 )

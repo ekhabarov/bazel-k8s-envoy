@@ -137,8 +137,8 @@ oci_pull(
 
 oci_pull(
     name = "envoy_base",
-    # tag = "distroless-v1.27.0",
-    digest = "sha256:e315dd6b713bc6fc98d782940046d4a55711117f61d318459121c0bdfaac70ef",
+    # tag = "distroless-v1.28.0",
+    digest = "sha256:0bb664e36cef65b884965b22bbb2fbd1acecb8bb174683a321677c4fc7475593",
     image = "index.docker.io/envoyproxy/envoy",
     platforms = [
         "linux/amd64",
@@ -160,31 +160,15 @@ load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 
 rules_pkg_dependencies()
 
-###########
-
-### Aspect rules
 http_archive(
-    name = "aspect_bazel_lib",
-    sha256 = "09b51a9957adc56c905a2c980d6eb06f04beb1d85c665b467f659871403cf423",
-    strip_prefix = "bazel-lib-1.34.5",
-    url = "https://github.com/aspect-build/bazel-lib/releases/download/v1.34.5/bazel-lib-v1.34.5.tar.gz",
+    name = "rules_ytt",
+    sha256 = "876ab0223567ec7556107374a9b9cb3e3db9ba5bb97e778c35d36f1d1f717879",
+    strip_prefix = "rules_ytt-0.2.0",
+    url = "https://github.com/ekhabarov/rules_ytt/releases/download/v0.2.0/rules_ytt-v0.2.0.tar.gz",
 )
 
-load("@aspect_bazel_lib//lib:repositories.bzl", "aspect_bazel_lib_dependencies")
+load("@rules_ytt//ytt:repositories.bzl", "rules_ytt_dependencies", "rules_ytt_register_toolchains")
 
-aspect_bazel_lib_dependencies()
+rules_ytt_dependencies()
 
-###########
-
-http_archive(
-    name = "com_github_ebay_rules_ytt",
-    sha256 = "0232522fd7a07d2eb0a47fe4ec3a6dc8bc8e0bcbaa8abd658c6be53a34f5bd76",
-    strip_prefix = "rules_ytt-0.1.0",
-    urls = [
-        "https://github.com/eBay/rules_ytt/releases/download/v0.1.0/rules_ytt-0.1.0.zip",
-    ],
-)
-
-load("@com_github_ebay_rules_ytt//:deps.bzl", "ytt_rules_dependencies")
-
-ytt_rules_dependencies()
+rules_ytt_register_toolchains()

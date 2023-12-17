@@ -10,9 +10,9 @@ SA2 = [
   "SA2002",
 ]
 
-STATICHECK_ANALYZERS = SA1 + SA2
+STATICCHECK_ANALYZERS = SA1 + SA2
 
-STATICHECK_OVERRIDE = {
+STATICCHECK_OVERRIDE = {
   "SA1000": {
     "exclude_files": {
       "external/": "third_party",
