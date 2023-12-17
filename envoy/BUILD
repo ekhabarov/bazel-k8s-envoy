@@ -1,6 +1,6 @@
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
-load("@com_github_ebay_rules_ytt//:def.bzl", "ytt")
+load("@rules_ytt//:defs.bzl", "ytt")
 load("//:stamp.bzl", "stamp")
 
 package(default_visibility = ["//visibility:public"])
@@ -44,6 +44,6 @@ ytt(
         ":values.yaml",
         "//k8s:defaults.yaml",
         "//k8s/base:service.yaml",
+        ":image.digest",
     ],
-    image = ":image.digest",
 )
