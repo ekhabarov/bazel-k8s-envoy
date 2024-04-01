@@ -19,7 +19,8 @@ spec:
     spec:
       containers:
       - name: #@ data.values.app_name
-        image: #@ "bazel/{}@{}".format(data.values.app_name, data.read("image.json.sha256").strip())
+        #! image: #@ "bazel/{}@{}".format(data.values.app_name, data.read("image.json.sha256").strip())
+        image: #@ "bazel/{}:latest".format(data.values.app_name)
         ports:
         - containerPort: 5000
         resources:

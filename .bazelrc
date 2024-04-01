@@ -1,6 +1,5 @@
 # Limit resources for build
 build --local_ram_resources=HOST_RAM*.5 --local_cpu_resources=8
-build --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64
 
 # Show us information about failures.
 build --verbose_failures

@@ -76,40 +76,43 @@ load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 
 ############## TILT
 
-TILT_VERSION = "0.33.1"
-
-TILT_ARCH = "x86_64"
+TILT_VERSION = "0.33.12"
 
 TILT_URL = "https://github.com/windmilleng/tilt/releases/download/v{VER}/tilt.{VER}.{OS}.{ARCH}.tar.gz"
 
-http_archive(
-    name = "tilt_linux_x86_64",
-    build_file_content = "exports_files(['tilt'])",
-    sha256 = "34ea609c7933084781cdd88a20b5e8b42c41d164460ba59cb8ea612ed106847d",
-    urls = [TILT_URL.format(
-        ARCH = TILT_ARCH,
-        OS = "linux",
-        VER = TILT_VERSION,
-    )],
-)
+_tilt_sha = {
+    "linux_arm64": "584bb4a288bf19666356a26e178b6c9ec0e9cd18863e38eca64ff96bb33019ef",
+    "linux_x86_64": "a8ba6f489d4b0145c7c4447195b0ee7de191bffeebd61c2887d34fe3dc173ac1",
+    "mac_arm64": "29c916a79ef3c83bbd5525d8b000d1bb2aa738523ad7dd2c65f9f09f4abbe83e",
+    "mac_x86_64": "f7db4f1318be278f7b6c1efff5d2483642a6eb3f2fa86f6e99757664703b2fdb",
+}
 
-http_archive(
-    name = "tilt_darwin_x86_64",
+[http_archive(
+    name = "tilt_{os}_{arch}".format(
+        arch = arch,
+        os = os if os == "linux" else "darwin",
+    ),
     build_file_content = "exports_files(['tilt'])",
-    sha256 = "b5ef9875ef4027ce8e750ccac86eb0e768e5e7c15647e02a1641466f2b501a0e",
+    sha256 = _tilt_sha["%s_%s" % (os, arch)],
     urls = [TILT_URL.format(
-        ARCH = TILT_ARCH,
-        OS = "mac",
+        ARCH = arch,
+        OS = os,
         VER = TILT_VERSION,
     )],
-)
+) for arch in [
+    "x86_64",
+    "arm64",
+] for os in [
+    "linux",
+    "mac",
+]]
 
 ### OCI ###
 http_archive(
     name = "rules_oci",
-    sha256 = "21a7d14f6ddfcb8ca7c5fc9ffa667c937ce4622c7d2b3e17aea1ffbc90c96bed",
-    strip_prefix = "rules_oci-1.4.0",
-    url = "https://github.com/bazel-contrib/rules_oci/releases/download/v1.4.0/rules_oci-v1.4.0.tar.gz",
+    sha256 = "56d5499025d67a6b86b2e6ebae5232c72104ae682b5a21287770bd3bf0661abf",
+    strip_prefix = "rules_oci-1.7.5",
+    url = "https://github.com/bazel-contrib/rules_oci/releases/download/v1.7.5/rules_oci-v1.7.5.tar.gz",
 )
 
 load("@rules_oci//oci:dependencies.bzl", "rules_oci_dependencies")
@@ -127,11 +130,11 @@ load("@rules_oci//oci:pull.bzl", "oci_pull")
 
 oci_pull(
     name = "distroless_base",
-    digest = "sha256:ccaef5ee2f1850270d453fdf700a5392534f8d1a8ca2acda391fbb6a06b81c86",  #multi-arch
+    digest = "sha256:280852156756ea3f39f9e774a30346f2e756244e1f432aea3061c4ac85d90a66",  #multi-arch
     image = "gcr.io/distroless/base",
     platforms = [
         "linux/amd64",
-        "linux/arm64",
+        "linux/arm64/v8",
     ],
 )
 
@@ -147,6 +150,7 @@ oci_pull(
 )
 
 ### PKG
+# TODO(ekhabarov): replace with bazel-lib/tar
 http_archive(
     name = "rules_pkg",
     sha256 = "8f9ee2dc10c1ae514ee599a8b42ed99fa262b757058f65ad3c384289ff70c4b8",

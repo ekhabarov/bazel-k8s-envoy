@@ -22,7 +22,7 @@ oci_image(
 oci_tarball(
     name = "tarball",
     image = ":image",
-    repo_tags = ["envoy:latest"],
+    repo_tags = ["bazel/envoy:latest"],
 )
 
 stamp(
@@ -40,10 +40,10 @@ ytt(
     name = "yaml",
     srcs = [
         ":command.yaml",
+        ":image.digest",
         ":ports.yaml",
         ":values.yaml",
         "//k8s:defaults.yaml",
         "//k8s/base:service.yaml",
-        ":image.digest",
     ],
 )

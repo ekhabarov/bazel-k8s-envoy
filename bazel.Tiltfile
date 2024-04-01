@@ -1,9 +1,10 @@
 arch = "amd64"
 
-if k8s_context().endswith("@pi"):
-  arch = "arm"
+#  if k8s_context().endswith("@pi"):
+#    arch = "arm"
 
-BAZEL_RUN_CMD = "bazel run --platforms=@io_bazel_rules_go//go/toolchain:linux_{arch} %s -- --norun".format(arch=arch)
+#  BAZEL_RUN_CMD = "bazel run --platforms=@io_bazel_rules_go//go/toolchain:linux_{arch} %s -- --norun".format(arch=arch)
+BAZEL_RUN_CMD = "bazel run %s".format(arch=arch)
 
 # build dependencies: what dependencies does Bazel need to execute this target?
 BAZEL_SOURCES_CMD = """
@@ -76,5 +77,5 @@ def bazel_build(image, target):
     ref = image,
     command = BAZEL_RUN_CMD % target,
     deps = source_deps_files,
-    tag="tarball"
+    tag="latest"
   )

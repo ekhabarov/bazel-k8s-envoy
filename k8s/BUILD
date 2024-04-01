@@ -5,10 +5,10 @@ exports_files([
 ])
 
 ytt(
-  name = "ns",
-  srcs = [
-    ":defaults.yaml",
-    ":values.yaml",
-    "//k8s/base:namespace.yaml",
-  ]
+    name = "ns",
+    srcs = [
+        ":defaults.yaml",
+        ":values.yaml",
+        "//k8s/base:namespace.yaml",
+    ],
 )
