@@ -29,6 +29,6 @@ for api in apis:
     print(ports)
 
   k8s_yaml(bazel_run('//{name}:yaml'.format(name=name)))
-  bazel_build('bazel/{name}'.format(name=name), '//{name}:image'.format(name=name))
+  bazel_build('bazel/%s' % name, '//{name}:tarball'.format(name=name))
   k8s_resource(workload=name, port_forwards=ports)
 

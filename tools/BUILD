@@ -1,3 +1,10 @@
+_data = select({
+    "@bazel_tools//src/conditions:darwin_arm64": ["@tilt_darwin_arm64//:tilt"],
+    "@bazel_tools//src/conditions:darwin_x86_64": ["@tilt_darwin_x86_64//:tilt"],
+    "@bazel_tools//src/conditions:linux_aarch64": ["@tilt_linux_arm64//:tilt"],
+    "@bazel_tools//src/conditions:linux_x86_64": ["@tilt_linux_x86_64//:tilt"],
+})
+
 sh_binary(
     name = "tilt-up",
     srcs = ["wrapper.sh"],
@@ -6,10 +13,7 @@ sh_binary(
         "up",
         "--legacy=true",
     ],
-    data = select({
-        "@bazel_tools//src/conditions:darwin_x86_64": ["@tilt_darwin_x86_64//:tilt"],
-        "//conditions:default": ["@tilt_linux_x86_64//:tilt"],
-    }),
+    data = _data,
 )
 
 sh_binary(
@@ -20,8 +24,5 @@ sh_binary(
         "down",
         "--delete-namespaces",
     ],
-    data = select({
-        "@bazel_tools//src/conditions:darwin": ["@tilt_darwin_x86_64//:tilt"],
-        "//conditions:default": ["@tilt_linux_x86_64//:tilt"],
-    }),
+    data = _data,
 )

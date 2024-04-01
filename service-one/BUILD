@@ -1,8 +1,9 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@rules_ytt//:defs.bzl", "ytt")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_push", "oci_tarball")
 load("//:stamp.bzl", "stamp")
+load("//:platforms.bzl", "ARCH", "OS")
 
 go_library(
     name = "service-one_lib",
@@ -17,28 +18,61 @@ go_library(
     ],
 )
 
-go_binary(
-    name = "service-one",
-    embed = [":service-one_lib"],
-    visibility = ["//visibility:public"],
-)
+[[
+    go_binary(
+        name = "service-one_{os}_{arch}".format(
+            arch = arch,
+            os = os,
+        ),
+        embed = [":service-one_lib"],
+        goarch = arch,
+        goos = os,
+        visibility = ["//visibility:public"],
+    ),
 
-pkg_tar(
-    name = "tar",
-    srcs = [":service-one"],
-)
+    pkg_tar(
+        name = "tar_{os}_{arch}".format(
+            arch = arch,
+            os = os,
+        ),
+        srcs = [":service-one_{os}_{arch}".format(
+            arch = arch,
+            os = os,
+        )],
+    ),
 
-oci_image(
+    oci_image(
+        name = "image_{os}_{arch}".format(
+            arch = arch,
+            os = os,
+        ),
+        base = "@distroless_base",
+        entrypoint = ["/service-one_{os}_{arch}".format(
+            arch = arch,
+            os = os,
+        )],
+        tars = [":tar_{os}_{arch}".format(
+            arch = arch,
+            os = os,
+        )],
+    ),
+] for arch in ARCH for os in OS]
+
+oci_image_index(
     name = "image",
-    base = "@distroless_base",
-    entrypoint = ["/service-one"],
-    tars = [":tar"],
+    images = [
+        ":image_linux_arm64",
+        ":image_linux_amd64",
+    ],
 )
 
 oci_tarball(
     name = "tarball",
-    image = ":image",
-    repo_tags = ["service-one:latest"],
+    image = select({
+        "@platforms//cpu:arm64": ":image_linux_arm64",
+        "@platforms//cpu:x86_64": ":image_linux_amd64",
+    }),
+    repo_tags = ["bazel/service-one:latest"],
 )
 
 stamp(
@@ -58,7 +92,12 @@ ytt(
         "//k8s:defaults.yaml",
         "//k8s/base:service.yaml",
         ":values.yaml",
-        ":image.digest",
+        # ":image.digest", # there is no .digest on .index targets
     ],
-    # image = ":image.digest",
+)
+
+go_binary(
+    name = "service-one",
+    embed = [":service-one_lib"],
+    visibility = ["//visibility:public"],
 )
