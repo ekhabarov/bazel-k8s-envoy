@@ -9,7 +9,7 @@ go_library(
         "@com_github_envoyproxy_go_control_plane//envoy/config/core/v3:core",
         "@com_github_envoyproxy_go_control_plane//envoy/service/auth/v3:auth",
         "@com_github_envoyproxy_go_control_plane//envoy/type/v3:type",
-        "@go_googleapis//google/rpc:status_go_proto",
+        "@org_golang_google_genproto//googleapis/rpc/status",
         "@org_golang_google_grpc//codes",
     ],
 )

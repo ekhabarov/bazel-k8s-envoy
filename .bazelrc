@@ -1,5 +1,5 @@
 # Limit resources for build
-build --local_ram_resources=HOST_RAM*.5 --local_cpu_resources=8
+#  build --local_ram_resources=HOST_RAM*.5 --local_cpu_resources=8
 
 # Show us information about failures.
 build --verbose_failures
