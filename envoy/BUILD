@@ -1,11 +1,11 @@
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_ytt//:defs.bzl", "ytt")
 load("//:stamp.bzl", "stamp")
+load("//utils:tar.bzl", "mtar")
 
 package(default_visibility = ["//visibility:public"])
 
-pkg_tar(
+mtar(
     name = "tar",
     srcs = [
         ":envoy.yaml",
@@ -20,7 +20,7 @@ oci_image(
 )
 
 oci_tarball(
-    name = "tarball",
+   name = "tarball",
     image = ":image",
     repo_tags = ["bazel/envoy:latest"],
 )

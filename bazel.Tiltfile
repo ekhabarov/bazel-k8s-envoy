@@ -77,5 +77,6 @@ def bazel_build(image, target):
     ref = image,
     command = BAZEL_RUN_CMD % target,
     deps = source_deps_files,
-    tag="latest"
+    tag="latest",
+    skips_local_docker=True,
   )

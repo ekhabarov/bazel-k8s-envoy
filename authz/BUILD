@@ -1,9 +1,9 @@
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
-load("@rules_ytt//:defs.bzl", "ytt")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_cross_binary", "go_library")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_push", "oci_tarball")
-load("//:stamp.bzl", "stamp")
+load("@rules_ytt//:defs.bzl", "ytt")
 load("//:platforms.bzl", "ARCH", "OS")
+load("//:stamp.bzl", "stamp")
+load("//utils:tar.bzl", "mtar")
 
 go_library(
     name = "authz_lib",
@@ -13,31 +13,34 @@ go_library(
     deps = [
         "//authz/server",
         "@com_github_envoyproxy_go_control_plane//envoy/service/auth/v3:auth",
-        "@org_golang_google_grpc//:go_default_library",
+        "@org_golang_google_grpc//:grpc",
         "@org_golang_google_grpc//reflection",
     ],
 )
 
 [[
-    go_binary(
+    go_cross_binary(
         name = "authz_{os}_{arch}".format(
             arch = arch,
             os = os,
         ),
-        embed = [":authz_lib"],
-        goarch = arch,
-        goos = os,
-        visibility = ["//visibility:public"],
+        platform = "@io_bazel_rules_go//go/toolchain:{os}_{arch}".format(
+            arch = arch,
+            os = os,
+        ),
+        target = ":authz",
     ),
-    pkg_tar(
+    mtar(
         name = "tar_{os}_{arch}".format(
             arch = arch,
             os = os,
         ),
-        srcs = [":authz_{os}_{arch}".format(
-            arch = arch,
-            os = os,
-        )],
+        srcs = [
+            ":authz_{os}_{arch}".format(
+                arch = arch,
+                os = os,
+            ),
+        ],
     ),
     oci_image(
         name = "image_{os}_{arch}".format(

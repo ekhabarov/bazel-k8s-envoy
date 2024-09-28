@@ -1,7 +1,7 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
 load("//:stamp.bzl", "stamp")
+load("//utils:tar.bzl", "mtar")
 
 go_library(
     name = "runtime_lib",
@@ -16,7 +16,7 @@ go_binary(
     visibility = ["//visibility:public"],
 )
 
-pkg_tar(
+mtar(
     name = "tar",
     srcs = [":runtime"],
 )

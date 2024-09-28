@@ -2,21 +2,38 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "com_github_sluongng_nogo_analyzer",
-    sha256 = "a74a5e44751d292d17bd879e5aa8b40baa94b5dc2f043df1e3acbb3e23ead073",
-    strip_prefix = "nogo-analyzer-0.0.2",
+    sha256 = "0dc6b5e86094d081e05bcd0c3e41fc275a2398c64e545376166139412181f150",
+    strip_prefix = "nogo-analyzer-0.0.3",
     urls = [
-        "https://github.com/sluongng/nogo-analyzer/archive/refs/tags/v0.0.2.tar.gz",
+        "https://github.com/sluongng/nogo-analyzer/archive/refs/tags/v0.0.3.tar.gz",
     ],
 )
 
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "51dc53293afe317d2696d4d6433a4c33feedb7748a9e352072e2ec3c0dafd2c6",
+    sha256 = "f4a9314518ca6acfa16cc4ab43b0b8ce1e4ea64b81c38d8a3772883f153346b8",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.40.1/rules_go-v0.40.1.zip",
-        "https://github.com/bazelbuild/rules_go/releases/download/v0.40.1/rules_go-v0.40.1.zip",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.50.1/rules_go-v0.50.1.zip",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.50.1/rules_go-v0.50.1.zip",
     ],
 )
+
+http_archive(
+    name = "googleapis",
+    sha256 = "12b19423a8cf8d35848440e818d5c5385848edf59d3da434e6ea49a070482526",
+    strip_prefix = "googleapis-d6f184876ec67295addccbb70aa4af622e049a7e",
+    urls = [
+        "https://github.com/googleapis/googleapis/archive/d6f184876ec67295addccbb70aa4af622e049a7e.zip",
+    ],
+)
+
+load("@googleapis//:repository_rules.bzl", "switched_rules_by_language")
+
+switched_rules_by_language(
+    name = "com_google_googleapis_imports",
+    go = True,
+)
+
 
 load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
 
@@ -24,15 +41,15 @@ go_rules_dependencies()
 
 go_register_toolchains(
     nogo = "@//:nogo",
-    version = "1.20.8",
+    version = "1.22.7",
 )
 
 http_archive(
     name = "bazel_gazelle",
-    sha256 = "b8b6d75de6e4bf7c41b7737b183523085f56283f6db929b86c5e7e1f09cf59c9",
+    integrity = "sha256-LHVFzJFKQR5cFcPVWgpe00+/9i3vDh8Ktu0UvaIiw8w=",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.31.1/bazel-gazelle-v0.31.1.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.31.1/bazel-gazelle-v0.31.1.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.39.0/bazel-gazelle-v0.39.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.39.0/bazel-gazelle-v0.39.0.tar.gz",
     ],
 )
 
@@ -50,29 +67,23 @@ gazelle_dependencies()
 
 http_archive(
     name = "rules_proto",
-    sha256 = "dc3fb206a2cb3441b485eb1e423165b231235a1ea9b031b4433cf7bc1fa460dd",
-    strip_prefix = "rules_proto-5.3.0-21.7",
-    urls = [
-        "https://github.com/bazelbuild/rules_proto/archive/refs/tags/5.3.0-21.7.tar.gz",
-    ],
+    sha256 = "6fb6767d1bef535310547e03247f7518b03487740c11b6c6adb7952033fe1295",
+    strip_prefix = "rules_proto-6.0.2",
+    url = "https://github.com/bazelbuild/rules_proto/releases/download/6.0.2/rules_proto-6.0.2.tar.gz",
 )
 
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies")
 
 rules_proto_dependencies()
 
+load("@rules_proto//proto:setup.bzl", "rules_proto_setup")
+
+rules_proto_setup()
+
+load("@rules_proto//proto:toolchains.bzl", "rules_proto_toolchains")
+
 rules_proto_toolchains()
 
-http_archive(
-    name = "com_google_protobuf",
-    sha256 = "04e1ed9664d1325b43723b6a62a4a41bf6b2b90ac72b5daee288365aad0ea47d",
-    strip_prefix = "protobuf-3.20.3",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.20.3.zip"],
-)
-
-load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
-
-# protobuf_deps()
 
 ############## TILT
 
@@ -106,6 +117,34 @@ _tilt_sha = {
     "linux",
     "mac",
 ]]
+
+http_archive(
+    name = "aspect_bazel_lib",
+    sha256 = "87ab4ec479ebeb00d286266aca2068caeef1bb0b1765e8f71c7b6cfee6af4226",
+    strip_prefix = "bazel-lib-2.7.3",
+    url = "https://github.com/aspect-build/bazel-lib/releases/download/v2.7.3/bazel-lib-v2.7.3.tar.gz",
+)
+
+load("@aspect_bazel_lib//lib:repositories.bzl", "aspect_bazel_lib_dependencies", "aspect_bazel_lib_register_toolchains")
+
+# Required bazel-lib dependencies
+
+aspect_bazel_lib_dependencies()
+
+# Register bazel-lib toolchains
+
+aspect_bazel_lib_register_toolchains()
+
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "3cf7d5b17c4ff04fe9f038104e9d0cae6da09b8ce271c13e44f8ac69f51e4e0f",
+    strip_prefix = "protobuf-25.5",
+    urls = ["https://github.com/protocolbuffers/protobuf/releases/download/v25.5/protobuf-25.5.tar.gz"],
+)
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
 
 ### OCI ###
 http_archive(
@@ -148,21 +187,6 @@ oci_pull(
         "linux/arm64",
     ],
 )
-
-### PKG
-# TODO(ekhabarov): replace with bazel-lib/tar
-http_archive(
-    name = "rules_pkg",
-    sha256 = "8f9ee2dc10c1ae514ee599a8b42ed99fa262b757058f65ad3c384289ff70c4b8",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
-        "https://github.com/bazelbuild/rules_pkg/releases/download/0.9.1/rules_pkg-0.9.1.tar.gz",
-    ],
-)
-
-load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
-
-rules_pkg_dependencies()
 
 http_archive(
     name = "rules_ytt",
