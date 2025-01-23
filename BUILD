@@ -1,7 +1,7 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@com_github_sluongng_nogo_analyzer//:def.bzl", "nogo_config")
 load("@com_github_sluongng_nogo_analyzer//staticcheck:def.bzl", "staticcheck_analyzers")
-load("@io_bazel_rules_go//go:def.bzl", "TOOLS_NOGO", "nogo")
+load("@io_bazel_rules_go//go:def.bzl", "nogo")
 load(":staticheck.bzl", "STATICCHECK_ANALYZERS", "STATICCHECK_OVERRIDE")
 
 # gazelle:prefix github.com/ekhabarov/bazel-k8s-envoy
