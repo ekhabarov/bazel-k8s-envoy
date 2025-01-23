@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	fmt.Printf("Hello, from %s/%s!", runtime.GOOS, runtime.GOARCH)
+	fmt.Printf("Hello1, from %s/%s!", runtime.GOOS, runtime.GOARCH)
 }
