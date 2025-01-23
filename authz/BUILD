@@ -1,5 +1,5 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_cross_binary", "go_library")
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_push", "oci_tarball")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_push", "oci_load")
 load("@rules_ytt//:defs.bzl", "ytt")
 load("//:platforms.bzl", "ARCH", "OS")
 load("//:stamp.bzl", "stamp")
@@ -67,7 +67,7 @@ oci_image_index(
     ],
 )
 
-oci_tarball(
+oci_load(
     name = "tarball",
     image = select({
         "@platforms//cpu:arm64": ":image_linux_arm64",

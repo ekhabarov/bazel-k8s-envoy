@@ -1,4 +1,4 @@
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_tarball")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push", "oci_load")
 load("@rules_ytt//:defs.bzl", "ytt")
 load("//:stamp.bzl", "stamp")
 load("//utils:tar.bzl", "mtar")
@@ -19,7 +19,7 @@ oci_image(
     tars = [":tar"],
 )
 
-oci_tarball(
+oci_load(
    name = "tarball",
     image = ":image",
     repo_tags = ["bazel/envoy:latest"],

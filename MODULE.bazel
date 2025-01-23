@@ -1,0 +1,81 @@
+module(
+    name = "bazel-k8s-envoy",
+    version = "0.0.1",
+)
+
+bazel_dep(name = "aspect_bazel_lib", version = "2.11.0")
+bazel_dep(name = "rules_oci", version = "2.2.0")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "distroless_base",
+    digest = "sha256:280852156756ea3f39f9e774a30346f2e756244e1f432aea3061c4ac85d90a66",  #multi-arch
+    image = "gcr.io/distroless/base",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+)
+oci.pull(
+    name = "envoy_base",
+    # tag = "distroless-v1.28.0",
+    digest = "sha256:0bb664e36cef65b884965b22bbb2fbd1acecb8bb174683a321677c4fc7475593",
+    image = "index.docker.io/envoyproxy/envoy",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64",
+    ],
+)
+
+# For each oci.pull call, repeat the "name" here to expose them as dependencies.
+use_repo(
+    oci,
+    "distroless_base",
+    "distroless_base_linux_amd64",
+    "distroless_base_linux_arm64_v8",
+    "envoy_base",
+    "envoy_base_linux_amd64",
+    "envoy_base_linux_arm64",
+)
+
+bazel_dep(name = "rules_go", version = "0.52.0", repo_name = "io_bazel_rules_go")
+bazel_dep(name = "gazelle", version = "0.41.0", repo_name = "bazel_gazelle")
+
+go_deps = use_extension("@bazel_gazelle//:extensions.bzl", "go_deps")
+go_deps.from_file(go_mod = "//:go.mod")
+use_repo(
+    go_deps,
+    "co_honnef_go_tools",
+    "com_github_burntsushi_toml",
+    "com_github_envoyproxy_go_control_plane",
+    "org_golang_google_genproto",
+    "org_golang_google_grpc",
+    "org_golang_x_tools",
+)
+
+go_sdk = use_extension("@io_bazel_rules_go//go:extensions.bzl", "go_sdk")
+go_sdk.download(version = "1.23.4")
+go_sdk.nogo(nogo = "//:nogo")
+
+bazel_dep(name = "rules_proto", version = "7.1.0")
+bazel_dep(name = "toolchains_protoc", version = "0.3.6")
+bazel_dep(name = "googleapis", version = "0.0.0-20240819-fe8ba054a")
+
+switched_rules = use_extension("@googleapis//:extensions.bzl", "switched_rules")
+switched_rules.use_languages(
+    go = True,
+    grpc = True,
+)
+use_repo(switched_rules, "com_google_googleapis_imports")
+
+protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
+protoc.toolchain(
+    # Creates a repository to satisfy well-known-types dependencies such as
+    # deps=["@com_google_protobuf//:any_proto"]
+    google_protobuf = "com_google_protobuf",
+    # Pin to any version of protoc
+    version = "v27.3",
+)
+use_repo(protoc, "com_google_protobuf", "toolchains_protoc_hub")
+
+register_toolchains("@toolchains_protoc_hub//:all")

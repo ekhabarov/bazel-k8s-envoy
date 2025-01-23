@@ -1,6 +1,8 @@
 # Limit resources for build
 #  build --local_ram_resources=HOST_RAM*.5 --local_cpu_resources=8
 
+common --incompatible_enable_proto_toolchain_resolution
+
 # Show us information about failures.
 build --verbose_failures
 test --test_output=errors

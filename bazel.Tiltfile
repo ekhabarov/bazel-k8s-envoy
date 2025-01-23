@@ -3,7 +3,7 @@ arch = "amd64"
 #  if k8s_context().endswith("@pi"):
 #    arch = "arm"
 
-#  BAZEL_RUN_CMD = "bazel run --platforms=@io_bazel_rules_go//go/toolchain:linux_{arch} %s -- --norun".format(arch=arch)
+#  BAZEL_RUN_CMD = "bazel run --platforms=@rules_go//go/toolchain:linux_{arch} %s -- --norun".format(arch=arch)
 BAZEL_RUN_CMD = "bazel run %s".format(arch=arch)
 
 # build dependencies: what dependencies does Bazel need to execute this target?
