@@ -45,16 +45,3 @@ _tilt_sha = {
     "linux",
     "mac",
 ]]
-
-http_archive(
-    name = "rules_ytt",
-    sha256 = "876ab0223567ec7556107374a9b9cb3e3db9ba5bb97e778c35d36f1d1f717879",
-    strip_prefix = "rules_ytt-0.2.0",
-    url = "https://github.com/ekhabarov/rules_ytt/releases/download/v0.2.0/rules_ytt-v0.2.0.tar.gz",
-)
-
-load("@rules_ytt//ytt:repositories.bzl", "rules_ytt_dependencies", "rules_ytt_register_toolchains")
-
-rules_ytt_dependencies()
-
-rules_ytt_register_toolchains()
