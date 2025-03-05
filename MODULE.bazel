@@ -3,9 +3,11 @@ module(
     version = "0.0.1",
 )
 
-bazel_dep(name = "aspect_bazel_lib", version = "2.11.0")
+bazel_dep(name = "aspect_bazel_lib", version = "2.13.0")
 bazel_dep(name = "rules_ytt", version = "0.3.0")
 bazel_dep(name = "rules_oci", version = "2.2.0")
+bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
 
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
