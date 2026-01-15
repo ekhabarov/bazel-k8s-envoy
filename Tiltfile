@@ -1,6 +1,8 @@
 analytics_settings(enable=False)
 disable_snapshots()
 
+default_registry("localhost:5000")
+
 load('./bazel.Tiltfile', 'bazel_run', 'bazel_build')
 
 k8s_yaml(bazel_run('//k8s:ns'))
