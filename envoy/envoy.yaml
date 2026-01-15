@@ -35,7 +35,7 @@ static_resources:
                   - name: envoy.filters.http.grpc_json_transcoder
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
-                      proto_descriptor: "/service_one_descriptor_set.pb"
+                      proto_descriptor: "/service_one_descriptor_set"
                       services: ["svc.ServiceOne"]
                       match_incoming_request_route: false
                       ignore_unknown_query_parameters: true

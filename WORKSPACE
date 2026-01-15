@@ -15,15 +15,15 @@ staticcheck()
 
 ############## TILT
 
-TILT_VERSION = "0.33.12"
+TILT_VERSION = "0.36.0"
 
 TILT_URL = "https://github.com/windmilleng/tilt/releases/download/v{VER}/tilt.{VER}.{OS}.{ARCH}.tar.gz"
 
 _tilt_sha = {
-    "linux_arm64": "584bb4a288bf19666356a26e178b6c9ec0e9cd18863e38eca64ff96bb33019ef",
-    "linux_x86_64": "a8ba6f489d4b0145c7c4447195b0ee7de191bffeebd61c2887d34fe3dc173ac1",
-    "mac_arm64": "29c916a79ef3c83bbd5525d8b000d1bb2aa738523ad7dd2c65f9f09f4abbe83e",
-    "mac_x86_64": "f7db4f1318be278f7b6c1efff5d2483642a6eb3f2fa86f6e99757664703b2fdb",
+    "linux_arm64": "1fb79ec7609c9d430c29c66d9d1c12c2a58aaf2314bf42d7372105f8ab2eb4ce",
+    "linux_x86_64": "9ce610083efc76ffa518ec9b001ddb1711b652adce3333f57ffff6be50ad9719",
+    "mac_arm64": "2e7c99c07d9a06ba8b76bc758c8808f263e12356ea88bba7438f61832e9963df",
+    "mac_x86_64": "07639c3ec1a22301ce2b4b96f9786074a53ae56714c2fb1940611d60a04d7bc9",
 }
 
 [http_archive(
